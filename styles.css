@@ -45,9 +45,9 @@ tr {
 }
 
 .highlight-green {
-    background-color: #abffbd;
+    background-color: #abffbd !important;
 }
 
 .highlight-red {
-    background-color: #ff9e9e;
+    background-color: #ff9e9e !important;
 }

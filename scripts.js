@@ -1,3 +1,5 @@
+let green = Boolean;
+let red = Boolean;
 document.addEventListener('DOMContentLoaded', () => {
     Promise.all([
         fetch('https://statfin.stat.fi/PxWeb/sq/4e244893-7761-4c4f-8e55-7a8d41d86eff').then(res => res.json()),
@@ -20,31 +22,37 @@ document.addEventListener('DOMContentLoaded', () => {
             const municipalityName = municipalityLabelValues[municipalityIndex];
             const population = populationIndex[i]; 
             const employment = employmentIndex[i];
-            const employmentPercentage = ((employmentIndex[i]/populationIndex[i]) * 100).toFixed(2);
+            const threshold1 = 45.00;
+            const threshold2 = 25.00;
+            let employmentPercentage = parseFloat((employment / population) * 100);
+            console.log(employmentPercentage);
 
-            const row = '<tr>' +
-                        '<td>' + municipalityName + '</td>' + 
-                        '<td>' + population + '</td>' + 
-                        '<td>' + employment + '</td>' + 
-                        '<td class="percentageCell">' + employmentPercentage + '</td>' + 
-                        '</tr>';
-            tableBody.insertAdjacentHTML('beforeend', row); 
+            if (Number(employmentPercentage) > Number(threshold1)) {
+                green = true;
+                red = false;
+            } else if (Number(employmentPercentage) < Number(threshold2)) {
+                red = true;
+                green = false;
+            } else {
+                green = false;
+                red = false;
+            }
+
+            const row = document.createElement('tr');
+            row.innerHTML = 
+                '<td>' + municipalityName + '</td>' + 
+                '<td>' + population + '</td>' + 
+                '<td>' + employment + '</td>' + 
+                '<td class="percentageCell">' + employmentPercentage.toFixed(2) + '</td>'; 
+
+            if (green){
+                row.classList.add("highlight-green");
+            } else if (red) {
+                row.classList.add('highlight-red');
+            }
+
+            tableBody.appendChild(row);
         }
 
-const rows = document.querySelectorAll('tr');
-const threshold1 = 45;
-const threshold2 = 25;
-
-rows.forEach(row => {
-    const cell = row.querySelector('.percentageCell');
-    if (cell) {
-        const value = parseFloat(cell.textContent);
-        if (value > threshold1) {
-            row.classList.add('highlight-green');
-        } else if (value < threshold2) {
-            row.classList.add('highlight-red');
-        }
-    }
-});
     })
 });
